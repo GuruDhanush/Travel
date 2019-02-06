@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+</head>
+<body>
+
+    <form name="TravelForm" autocomplete="off">
+
+        <div id="fromdiv" class="autocomplete"> 
+            <label for="from"></label>
+            <input type="text" id="from"  name="from" placeholder="From">
+        </div>
+      
+        <!-- <div>
+            <label for="to"></label>
+            <input type="text" list="toList" name="to" placeholder="To">
+            <datalist id="toList">
+                <option value="Benguluru"></option>
+                <option value="Amaravathi"></option>
+            </datalist>
+        </div>
+
+        <div>
+            <label for="date"></label>
+            <input type="text" name="date" placeholder="date">
+        </div>
+
+        <div>
+            <label for="passengers"></label>
+            <input type="number" name="passengers" placeholder="Passengers" value="1">
+        </div> -->
+    </form>
+    
+</body>
+<script>
+    'use strict';
+
+    //let itemList = [];
+
+    // fetch('http://www.apsrtclivetrack.com/apiv1/busstops', {
+    //     mode: "no-cors",
+    //     method: "GET"
+    //    })
+    //    .then(function(response){
+    //        if(response.ok){
+    //           let data =  response.json();
+    //           data = data['data'];
+    //           data.forEach((stop) => {
+    //               itemList.add(stop['bstp_nm']);
+    //           });
+    //        }
+    //    });
+ 
+
+    // var xhr = new XMLHttpRequest();
+    // xhr.open('GET', 'http://www.apsrtclivetrack.com/apiv1/busstops', true);
+
+    // xhr.onload = function(e) {
+    // if (this.status == 200) {
+    //     let data = this.response.json();
+    //     data = data['data'];
+    //     data.forEach((stop) => {
+    //         itemList.add(stop['bstp_nm']);
+    //     });
+    // }
+    // };
+    // xhr.send();
+
+
+    let itemList = ["Hyderabad", "Chennai", "Bengaluru", "Delhi", "Amaravati", "Mumbai", "Kolkata", "Thiruvananthapuram", "Patna", "Lucknow","Ranchi", "Bhubaneshwar"];
+    let fromInput = document.getElementsByTagName("input");
+    let currentSelection = null;
+
+    fromInput[0].oninput = function(event)  {
+
+        currentSelection = null;
+        if(fromInput[0].nextElementSibling)
+            fromInput[0].nextElementSibling.remove();
+
+        let d = document.createElement("div");
+        d.setAttribute("id", "autodiv");
+        d.setAttribute("class", "items");
+
+        let listhtml = document.createElement("ul");
+        let id = 0;
+
+        itemList.forEach((item) => {
+            if(this.value != "" && item.toLowerCase().search(this.value.toLowerCase()) != -1) {
+                let li = document.createElement("li");
+                li.setAttribute("id", "li-"+id);
+                li.setAttribute("onmousedown", "onPressEnter('li-" + id +"')");
+                if(!currentSelection){
+                    currentSelection = li.getAttribute("id");
+                    li.setAttribute("class", "active");
+                } 
+                li.appendChild(document.createTextNode(item));
+                listhtml.append(li);
+                id++;
+            }
+        
+        })
+        d.appendChild(listhtml);
+        let s = document.getElementById("fromdiv");
+        s.appendChild(d);
+    };
+
+    fromInput[0].onkeydown = function(event) {
+
+        let li = document.getElementById(currentSelection);
+
+        //https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/8860571/
+        //edge before 17903 uses non standard up,down
+        if(event.key === "ArrowUp" || event.key === "Up"){
+            let previousSelection = li.previousSibling;
+            if(previousSelection) {
+                currentSelection = previousSelection.getAttribute("id");
+                li.removeAttribute("class");
+                previousSelection.setAttribute("class", "active");
+                event.preventDefault();
+            }
+        }
+        else
+        if(event.key === "ArrowDown" || event.key === "Down"){
+            let nextSelection = li.nextSibling;
+            if(nextSelection) {
+                currentSelection = nextSelection.getAttribute("id");
+                li.removeAttribute("class");
+                nextSelection.setAttribute("class", "active");
+                event.preventDefault();
+            }
+        }
+        else if(event.key === "Enter"){
+            fromInput[0].value = li.innerText;
+            fromInput[0].nextElementSibling.remove();
+            event.preventDefault();
+        }
+    };
+
+    function onPressEnter(id){
+        let li = document.getElementById(id);
+        fromInput[0].value = li.innerText;
+        fromInput[0].nextElementSibling.remove();
+    }
+</script>
+</html>
